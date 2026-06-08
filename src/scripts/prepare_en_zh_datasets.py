@@ -110,7 +110,12 @@ def read_chinese_scores(path: Path) -> pd.DataFrame:
 
 def prepare_chinese_aes(project_root: Path, dirs: dict[str, Path]) -> pd.DataFrame:
     dataset_root = project_root / "src" / "data" / "raw" / "AES-Dataset"
-    scores = read_chinese_scores(dataset_root / "scores.txt")
+    scores_path = dataset_root / "scores.txt"
+    essays_dir = dataset_root / "essays"
+    if not scores_path.exists() or not essays_dir.exists():
+        print(f"Skipping Chinese AES: expected data under {dataset_root}.")
+        return pd.DataFrame()
+    scores = read_chinese_scores(scores_path)
 
     rows = []
     for _, row in scores.iterrows():
@@ -153,6 +158,8 @@ def prepare_chinese_aes(project_root: Path, dirs: dict[str, Path]) -> pd.DataFra
 
 
 def sample_english_cefr(df: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame:
+    if df.empty:
+        return df
     groups = []
     for label, part in df.groupby("gold_label"):
         groups.append(part.sample(n=min(100, len(part)), random_state=42))
@@ -162,6 +169,8 @@ def sample_english_cefr(df: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame
 
 
 def sample_chinese_aes(df: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame:
+    if df.empty:
+        return df
     out = df.copy()
     out["score_band"] = pd.qcut(out["gold_numeric"], q=4, labels=False, duplicates="drop")
     groups = []
@@ -173,6 +182,14 @@ def sample_chinese_aes(df: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame:
 
 
 def summarize(name: str, df: pd.DataFrame, dirs: dict[str, Path]) -> dict:
+    if df.empty:
+        summary = {"name": name, "rows": 0}
+        (dirs["summaries"] / f"{name}_summary.json").write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        return summary
+
     summary = {
         "name": name,
         "rows": int(len(df)),
@@ -225,6 +242,8 @@ def write_combined_cefr(project_root: Path, english: pd.DataFrame, dirs: dict[st
 
 
 def write_combined_aes(project_root: Path, chinese: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame | None:
+    if chinese.empty:
+        return None
     ellipse_path = project_root / "src" / "data" / "processed" / "ellipse_aes.csv"
     if not ellipse_path.exists():
         return None
@@ -256,9 +275,10 @@ def main() -> None:
         "english_cefr_eval_max100_per_level": summarize(
             "english_cefr_eval_max100_per_level", english_sample, dirs
         ),
-        "chinese_aes": summarize("chinese_aes", chinese, dirs),
-        "chinese_aes_stratified": summarize("chinese_aes_stratified", chinese_sample, dirs),
     }
+    if not chinese.empty:
+        summaries["chinese_aes"] = summarize("chinese_aes", chinese, dirs)
+        summaries["chinese_aes_stratified"] = summarize("chinese_aes_stratified", chinese_sample, dirs)
     if combined_cefr is not None:
         summaries["cefr_multilingual_en_de_it_cs"] = summarize(
             "cefr_multilingual_en_de_it_cs", combined_cefr, dirs

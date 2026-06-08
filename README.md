@@ -10,8 +10,7 @@
 - 构造平衡实验样本；
 - 使用大语言模型进行 CEFR 等级判断和作文评分；
 - 计算 Accuracy、MAE、RMSE、Bias、Pearson、Spearman 和 QWK 等指标；
-- 汇总多个模型的评测结果；
-- 根据汇总数据重新生成论文图表。
+- 汇总多个模型的评测结果。
 
 ## 目录结构
 
@@ -53,6 +52,8 @@ python3 src/scripts/prepare_en_zh_datasets.py
 python3 src/scripts/sample_experiment_sets.py
 ```
 
+其中 UniversalCEFR 数据会通过 `datasets` 下载；中文 AES 数据需要提前放在 `src/data/raw/AES-Dataset/` 下。若本地缺少可选数据，脚本会跳过对应部分。
+
 运行 CEFR 评分：
 
 ```bash
@@ -76,6 +77,6 @@ python3 src/scripts/evaluate_predictions.py \
 
 ```bash
 python3 src/scripts/build_model_comparison.py \
-  --input-dir src/results/metrics/cefr4lang \
+  --metrics src/results/metrics/cefr4lang/*_metrics.csv \
   --output src/results/metrics/cefr4lang/cefr4lang_model_comparison.csv
 ```

@@ -1,7 +1,6 @@
-# Secrets and local API configuration
+# Secrets and local environment files
 .env
 .env.*
-src/api
 
 # Python caches and local environments
 __pycache__/

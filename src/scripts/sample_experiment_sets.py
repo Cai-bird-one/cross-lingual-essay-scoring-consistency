@@ -17,7 +17,11 @@ def sample_n(df: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:
 
 
 def make_merlin_balanced(processed: Path, seed: int) -> pd.DataFrame:
-    df = pd.read_csv(processed / "merlin_cefr.csv")
+    path = processed / "merlin_cefr.csv"
+    if not path.exists():
+        print(f"Skipping MERLIN balanced subset: {path} not found.")
+        return pd.DataFrame()
+    df = pd.read_csv(path)
     # A2 and B1 are the only CEFR levels with enough examples in all three
     # MERLIN languages, so this subset is the cleanest cross-language comparison.
     keep_levels = ["A2", "B1"]
@@ -32,7 +36,11 @@ def make_merlin_balanced(processed: Path, seed: int) -> pd.DataFrame:
 
 
 def make_merlin_full_eval(processed: Path, seed: int) -> pd.DataFrame:
-    df = pd.read_csv(processed / "merlin_cefr.csv")
+    path = processed / "merlin_cefr.csv"
+    if not path.exists():
+        print(f"Skipping MERLIN full subset: {path} not found.")
+        return pd.DataFrame()
+    df = pd.read_csv(path)
     groups = []
     for (language, label), part in df.groupby(["language", "gold_label"]):
         groups.append(sample_n(part, 200, seed))
@@ -52,7 +60,11 @@ def score_band(score: float) -> str:
 
 
 def make_ellipse_stratified(processed: Path, seed: int) -> pd.DataFrame:
-    df = pd.read_csv(processed / "ellipse_aes.csv")
+    path = processed / "ellipse_aes.csv"
+    if not path.exists():
+        print(f"Skipping ELLIPSE subset: {path} not found.")
+        return pd.DataFrame()
+    df = pd.read_csv(path)
     df["score_band"] = df["gold_numeric"].apply(score_band)
     groups = []
     for _, part in df.groupby("score_band"):
@@ -63,6 +75,8 @@ def make_ellipse_stratified(processed: Path, seed: int) -> pd.DataFrame:
 
 
 def summarize(name: str, df: pd.DataFrame) -> dict:
+    if df.empty:
+        return {"name": name, "rows": 0}
     return {
         "name": name,
         "rows": int(len(df)),

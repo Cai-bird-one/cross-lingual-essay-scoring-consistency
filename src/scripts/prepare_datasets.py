@@ -108,6 +108,9 @@ def ensure_ellipse_test_extracted(project_root: Path) -> Path | None:
 def normalize_ellipse(project_root: Path, dirs: dict[str, Path]) -> pd.DataFrame:
     train_csv = project_root / "ELLIPSE-Corpus" / "ELLIPSE_Final_github_train.csv"
     test_csv = ensure_ellipse_test_extracted(project_root)
+    if not train_csv.exists():
+        print(f"Skipping ELLIPSE: {train_csv} not found.")
+        return pd.DataFrame()
 
     paths: list[Path] = [train_csv]
     if test_csv is not None:
@@ -151,6 +154,12 @@ def normalize_ellipse(project_root: Path, dirs: dict[str, Path]) -> pd.DataFrame
 
 
 def write_summary(name: str, df: pd.DataFrame, dirs: dict[str, Path]) -> dict:
+    if df.empty:
+        summary = {"name": name, "rows": 0}
+        path = dirs["summaries"] / f"{name}_summary.json"
+        path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+        return summary
+
     summary = {
         "name": name,
         "rows": int(len(df)),
@@ -173,7 +182,8 @@ def write_summary(name: str, df: pd.DataFrame, dirs: dict[str, Path]) -> dict:
 
 
 def write_combined(merlin: pd.DataFrame, ellipse: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame:
-    combined = pd.concat([merlin, ellipse], ignore_index=True)
+    frames = [df for df in [merlin, ellipse] if not df.empty]
+    combined = pd.concat(frames, ignore_index=True)
     combined.to_csv(dirs["processed"] / "all_standardized.csv", index=False)
     combined.to_json(
         dirs["processed"] / "all_standardized.jsonl",
@@ -204,9 +214,10 @@ def main() -> None:
 
     summaries = {
         "merlin_cefr": write_summary("merlin_cefr", merlin, dirs),
-        "ellipse_aes": write_summary("ellipse_aes", ellipse, dirs),
         "all_standardized": write_summary("all_standardized", combined, dirs),
     }
+    if not ellipse.empty:
+        summaries["ellipse_aes"] = write_summary("ellipse_aes", ellipse, dirs)
     print(json.dumps(summaries, ensure_ascii=False, indent=2))
 
 

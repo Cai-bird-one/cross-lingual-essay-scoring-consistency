@@ -21,51 +21,23 @@ VALID_CEFR = set(CEFR_TO_NUM)
 VALID_AES_SCORES = {x / 2 for x in range(2, 11)}
 
 
-def load_env_file(path: Path) -> dict[str, str]:
-    if not path.exists():
-        return {}
-    config: dict[str, str] = {}
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" in line:
-            key, value = line.split("=", 1)
-            config[key.strip()] = value.strip().strip("\"'")
-        elif line.startswith("sk-"):
-            config["OPENAI_API_KEY"] = line
-    return config
-
-
 def get_client(args: argparse.Namespace) -> OpenAI:
-    file_config = load_env_file(Path(args.api_config)) if args.api_config else {}
     api_key = (
         args.api_key
         or os.getenv("OPENAI_API_KEY")
         or os.getenv("AIHUBMIX_API_KEY")
         or os.getenv("DASHSCOPE_API_KEY")
-        or file_config.get("OPENAI_API_KEY")
-        or file_config.get("AIHUBMIX_API_KEY")
-        or file_config.get("DASHSCOPE_API_KEY")
-        or file_config.get("api_key")
-        or file_config.get("API_KEY")
     )
     base_url = (
         args.base_url
         or os.getenv("OPENAI_BASE_URL")
         or os.getenv("AIHUBMIX_BASE_URL")
         or os.getenv("DASHSCOPE_BASE_URL")
-        or file_config.get("OPENAI_BASE_URL")
-        or file_config.get("AIHUBMIX_BASE_URL")
-        or file_config.get("DASHSCOPE_BASE_URL")
-        or file_config.get("base_url")
-        or file_config.get("url")
-        or file_config.get("URL")
     )
     if not api_key:
         raise SystemExit(
             "Missing API key. Set OPENAI_API_KEY/AIHUBMIX_API_KEY, pass --api-key, "
-            "or put api_key=... in src/api."
+            "or pass a provider-specific environment variable."
         )
     kwargs: dict[str, Any] = {"api_key": api_key}
     if base_url:
@@ -213,7 +185,6 @@ def main() -> None:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--retry-sleep", type=float, default=2.0)
-    parser.add_argument("--api-config", default="src/api")
     parser.add_argument("--api-key", default=None)
     parser.add_argument("--base-url", default=None)
     parser.add_argument(
