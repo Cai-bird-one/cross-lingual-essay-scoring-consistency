@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 ## API 配置
 
-模型评分脚本会从命令行参数、环境变量或本地 `src/api` 文件读取 API 配置。
+模型评分脚本会从命令行参数或环境变量读取 API 配置。
 
 环境变量示例：
 
@@ -42,15 +42,6 @@ pip install -r requirements.txt
 export OPENAI_API_KEY="your_api_key"
 export OPENAI_BASE_URL="your_base_url"
 ```
-
-本地文件示例：
-
-```text
-api_key=your_api_key
-url=https://example.com/v1
-```
-
-`src/api` 已被 `.gitignore` 忽略，不会上传到仓库。
 
 ## 常用命令
 
