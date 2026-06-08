@@ -1,7 +1,7 @@
 # Secrets and local API configuration
 .env
 .env.*
-experiments/api
+src/api
 
 # Python caches and local environments
 __pycache__/
@@ -26,8 +26,9 @@ venv/
 
 # Large or regenerated datasets
 ELLIPSE-Corpus/
-experiments/data/raw/
-experiments/data/processed/
+src/data/raw/
+src/data/processed/
+src/results/
 
 # Local presentation/reference materials
 *.docx

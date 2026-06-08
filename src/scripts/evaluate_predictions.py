@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate model predictions for CEFR and essay-scoring experiments."""
+"""Evaluate model predictions for CEFR and essay-scoring tasks."""
 
 from __future__ import annotations
 
@@ -149,7 +149,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--predictions", required=True, type=Path)
     parser.add_argument("--task", required=True, choices=["cefr", "aes", "aes100"])
-    parser.add_argument("--output-dir", default=Path("experiments/results/metrics"), type=Path)
+    parser.add_argument("--output-dir", default=Path("src/results/metrics"), type=Path)
     args = parser.parse_args()
 
     if not args.predictions.exists():

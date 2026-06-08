@@ -17,10 +17,9 @@
 
 ```text
 .
-├── experiments/
+├── src/
 │   ├── prompts/       # 评分任务提示词模板
 │   └── scripts/       # 数据处理、模型评分、评测和结果汇总脚本
-├── generate_paper_charts.py
 ├── requirements.txt
 └── README.md
 ```
@@ -35,7 +34,7 @@ pip install -r requirements.txt
 
 ## API 配置
 
-模型评分脚本会从命令行参数、环境变量或本地 `experiments/api` 文件读取 API 配置。
+模型评分脚本会从命令行参数、环境变量或本地 `src/api` 文件读取 API 配置。
 
 环境变量示例：
 
@@ -51,41 +50,41 @@ api_key=your_api_key
 url=https://example.com/v1
 ```
 
-`experiments/api` 已被 `.gitignore` 忽略，不会上传到仓库。
+`src/api` 已被 `.gitignore` 忽略，不会上传到仓库。
 
 ## 常用命令
 
 准备数据：
 
 ```bash
-python3 experiments/scripts/prepare_datasets.py
-python3 experiments/scripts/prepare_en_zh_datasets.py
-python3 experiments/scripts/sample_experiment_sets.py
+python3 src/scripts/prepare_datasets.py
+python3 src/scripts/prepare_en_zh_datasets.py
+python3 src/scripts/sample_experiment_sets.py
 ```
 
 运行 CEFR 评分：
 
 ```bash
-python3 experiments/scripts/score_with_llm.py \
-  --input experiments/data/processed/cefr_en_de_it_cs_balanced_a2_b1_400.csv \
+python3 src/scripts/score_with_llm.py \
+  --input src/data/processed/cefr_en_de_it_cs_balanced_a2_b1_400.csv \
   --task cefr \
   --model gpt-4o-mini \
-  --output experiments/results/predictions/cefr4lang_balanced_gpt4o_mini.csv
+  --output src/results/predictions/cefr4lang_balanced_gpt4o_mini.csv
 ```
 
 评测预测结果：
 
 ```bash
-python3 experiments/scripts/evaluate_predictions.py \
-  --predictions experiments/results/predictions/cefr4lang_balanced_gpt4o_mini.csv \
+python3 src/scripts/evaluate_predictions.py \
+  --predictions src/results/predictions/cefr4lang_balanced_gpt4o_mini.csv \
   --task cefr \
-  --output-dir experiments/results/metrics/cefr4lang
+  --output-dir src/results/metrics/cefr4lang
 ```
 
 汇总模型结果：
 
 ```bash
-python3 experiments/scripts/build_model_comparison.py \
-  --input-dir experiments/results/metrics/cefr4lang \
-  --output experiments/results/metrics/cefr4lang/cefr4lang_model_comparison.csv
+python3 src/scripts/build_model_comparison.py \
+  --input-dir src/results/metrics/cefr4lang \
+  --output src/results/metrics/cefr4lang/cefr4lang_model_comparison.csv
 ```

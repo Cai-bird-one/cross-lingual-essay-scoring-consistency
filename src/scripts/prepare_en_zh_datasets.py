@@ -109,7 +109,7 @@ def read_chinese_scores(path: Path) -> pd.DataFrame:
 
 
 def prepare_chinese_aes(project_root: Path, dirs: dict[str, Path]) -> pd.DataFrame:
-    dataset_root = project_root / "experiments" / "data" / "raw" / "AES-Dataset"
+    dataset_root = project_root / "src" / "data" / "raw" / "AES-Dataset"
     scores = read_chinese_scores(dataset_root / "scores.txt")
 
     rows = []
@@ -200,7 +200,7 @@ def summarize(name: str, df: pd.DataFrame, dirs: dict[str, Path]) -> dict:
 
 
 def write_combined_cefr(project_root: Path, english: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame | None:
-    merlin_path = project_root / "experiments" / "data" / "processed" / "merlin_cefr.csv"
+    merlin_path = project_root / "src" / "data" / "processed" / "merlin_cefr.csv"
     if not merlin_path.exists():
         return None
     merlin = pd.read_csv(merlin_path)
@@ -225,7 +225,7 @@ def write_combined_cefr(project_root: Path, english: pd.DataFrame, dirs: dict[st
 
 
 def write_combined_aes(project_root: Path, chinese: pd.DataFrame, dirs: dict[str, Path]) -> pd.DataFrame | None:
-    ellipse_path = project_root / "experiments" / "data" / "processed" / "ellipse_aes.csv"
+    ellipse_path = project_root / "src" / "data" / "processed" / "ellipse_aes.csv"
     if not ellipse_path.exists():
         return None
     ellipse = pd.read_csv(ellipse_path)
@@ -242,7 +242,7 @@ def write_combined_aes(project_root: Path, chinese: pd.DataFrame, dirs: dict[str
 
 def main() -> None:
     project_root = Path(__file__).resolve().parents[2]
-    dirs = ensure_dirs(project_root / "experiments")
+    dirs = ensure_dirs(project_root / "src")
 
     english = prepare_english_cefr(dirs)
     chinese = prepare_chinese_aes(project_root, dirs)

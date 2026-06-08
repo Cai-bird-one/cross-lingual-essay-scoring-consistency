@@ -195,10 +195,10 @@ def main() -> None:
     args = parser.parse_args()
 
     project_root = args.project_root.resolve()
-    experiments_root = project_root / "experiments"
-    dirs = ensure_dirs(experiments_root)
+    src_root = project_root / "src"
+    dirs = ensure_dirs(src_root)
 
-    merlin = normalize_merlin(experiments_root, dirs)
+    merlin = normalize_merlin(src_root, dirs)
     ellipse = normalize_ellipse(project_root, dirs)
     combined = write_combined(merlin, ellipse, dirs)
 

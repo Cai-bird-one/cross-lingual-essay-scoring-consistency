@@ -85,8 +85,8 @@ def main() -> None:
     args = parser.parse_args()
 
     root = args.project_root.resolve()
-    processed = root / "experiments" / "data" / "processed"
-    summaries_dir = root / "experiments" / "results" / "summaries"
+    processed = root / "src" / "data" / "processed"
+    summaries_dir = root / "src" / "results" / "summaries"
     summaries_dir.mkdir(parents=True, exist_ok=True)
 
     outputs = {

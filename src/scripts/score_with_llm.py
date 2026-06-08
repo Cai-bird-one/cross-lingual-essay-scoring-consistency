@@ -65,7 +65,7 @@ def get_client(args: argparse.Namespace) -> OpenAI:
     if not api_key:
         raise SystemExit(
             "Missing API key. Set OPENAI_API_KEY/AIHUBMIX_API_KEY, pass --api-key, "
-            "or put api_key=... in experiments/api."
+            "or put api_key=... in src/api."
         )
     kwargs: dict[str, Any] = {"api_key": api_key}
     if base_url:
@@ -85,7 +85,7 @@ def load_prompt(task: str, project_root: Path, prompt_file: Path | None = None) 
         name = "aes_100_scoring_prompt.md"
     else:
         name = "aes_scoring_prompt.md"
-    path = project_root / "experiments" / "prompts" / name
+    path = project_root / "src" / "prompts" / name
     return path.read_text(encoding="utf-8")
 
 
@@ -213,7 +213,7 @@ def main() -> None:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--retry-sleep", type=float, default=2.0)
-    parser.add_argument("--api-config", default="experiments/api")
+    parser.add_argument("--api-config", default="src/api")
     parser.add_argument("--api-key", default=None)
     parser.add_argument("--base-url", default=None)
     parser.add_argument(
