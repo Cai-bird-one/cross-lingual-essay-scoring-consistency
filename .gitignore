@@ -1,0 +1,43 @@
+# Secrets and local API configuration
+.env
+.env.*
+experiments/api
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Large or regenerated datasets
+ELLIPSE-Corpus/
+experiments/data/raw/
+experiments/data/processed/
+
+# Local presentation/reference materials
+*.docx
+*.pptx
+pdf_long_image_pages/
+*_横向长图.png
+*_论文初稿.pdf
+初稿.md
+translate_dp_exam_docx.py
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
